@@ -258,8 +258,7 @@ class _AddSetupSheetState extends State<AddSetupSheet> {
         decoration: InputDecoration(
           labelText: label,
           filled: true,
-          fillColor: Colors.white
-              .withValues(alpha: 0.05), // Используем актуальный withValues
+          fillColor: Colors.white.withValues(alpha: 0.05),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
@@ -287,8 +286,7 @@ class _AddSetupSheetState extends State<AddSetupSheet> {
         decoration: InputDecoration(
           labelText: label,
           filled: true,
-          fillColor: Colors.white
-              .withValues(alpha: 0.05), // Используем актуальный withValues
+          fillColor: Colors.white.withValues(alpha: 0.05),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)),
           ),

@@ -26,7 +26,6 @@ class BikeCard extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: bike.imageUrl,
               fit: BoxFit.cover,
-              // Красивый скелетон при загрузке картинки
               placeholder: (context, url) => Shimmer.fromColors(
                 baseColor: Colors.grey.shade900,
                 highlightColor: Colors.grey.shade800,
@@ -144,8 +143,7 @@ class BikeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color:
-            color.withValues(alpha: 0.12), // Используем актуальный withValues
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
