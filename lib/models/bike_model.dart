@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Bike {
   final String id;
   final String ownerName;
@@ -45,4 +47,47 @@ class Bike {
 
     return cog ~/ gcd(chainring, cog);
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'ownerName': ownerName,
+      'bikeName': bikeName,
+      'imageUrl': imageUrl,
+      'frameSize': frameSize,
+      'chainring': chainring,
+      'cog': cog,
+      'wheelset': wheelset,
+      'cockpit': cockpit,
+      'drivetrain': drivetrain,
+      'seating': seating,
+      'extras': extras,
+    };
+  }
+
+  factory Bike.fromMap(Map<String, dynamic> map) {
+    return Bike(
+      id: map['id'] as String? ?? '',
+      ownerName: map['ownerName'] as String? ?? '',
+      bikeName: map['bikeName'] as String? ?? '',
+      imageUrl: map['imageUrl'] as String? ?? '',
+      frameSize: map['frameSize'] as String? ?? '',
+      chainring: (map['chainring'] is int)
+          ? map['chainring'] as int
+          : int.tryParse('${map['chainring']}') ?? 0,
+      cog: (map['cog'] is int)
+          ? map['cog'] as int
+          : int.tryParse('${map['cog']}') ?? 0,
+      wheelset: map['wheelset'] as String? ?? '',
+      cockpit: map['cockpit'] as String? ?? '',
+      drivetrain: map['drivetrain'] as String? ?? '',
+      seating: map['seating'] as String? ?? '',
+      extras: map['extras'] as String? ?? '',
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Bike.fromJson(String source) =>
+      Bike.fromMap(json.decode(source) as Map<String, dynamic>);
 }

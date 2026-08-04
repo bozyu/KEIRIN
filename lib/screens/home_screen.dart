@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/bike_model.dart';
 import '../widgets/bike_card.dart';
@@ -18,6 +19,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
   final List<Bike> _bikes = [];
   BikeSort _sort = BikeSort.newest;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBikes();
+  }
 
   @override
   void dispose() {
@@ -167,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _deleteBike(Bike bike) {
     setState(() => _bikes.removeWhere((item) => item.id == bike.id));
+    _saveBikes();
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('удалено ${bike.bikeName}')));
@@ -182,6 +190,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (bike == null || !mounted) return;
     setState(() => _bikes.insert(0, bike));
+    _saveBikes();
+  }
+
+  Future<SharedPreferences?> _tryGetPrefs({int retries = 5, Duration delay = const Duration(milliseconds: 200)}) async {
+    for (var i = 0; i < retries; i++) {
+      try {
+        return await SharedPreferences.getInstance();
+      } catch (e) {
+        if (i == retries - 1) return null;
+        await Future.delayed(delay);
+      }
+    }
+    return null;
+  }
+
+  Future<void> _loadBikes() async {
+    final prefs = await _tryGetPrefs();
+    if (prefs == null) return;
+    final list = prefs.getStringList('bikes') ?? [];
+    setState(() {
+      _bikes.clear();
+      _bikes.addAll(list.map((e) => Bike.fromJson(e)));
+    });
+  }
+
+  Future<void> _saveBikes() async {
+    final prefs = await _tryGetPrefs();
+    if (prefs == null) return;
+    final list = _bikes.map((b) => b.toJson()).toList();
+    await prefs.setStringList('bikes', list);
   }
 }
-

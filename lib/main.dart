@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart'; // Подключили шри�
 import 'screens/home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const KeirinApp());
 }
 

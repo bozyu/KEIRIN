@@ -23,22 +23,41 @@ class BikeCard extends StatelessWidget {
         children: [
           AspectRatio(
             aspectRatio: 4 / 3,
-            child: CachedNetworkImage(
-              imageUrl: bike.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Shimmer.fromColors(
-                baseColor: Colors.grey.shade900,
-                highlightColor: Colors.grey.shade800,
-                child: ColoredBox(color: Colors.grey.shade900),
-              ),
-              errorWidget: (context, url, error) => ColoredBox(
-                color: Colors.grey.shade900,
-                child: const Center(
-                  child: Icon(Icons.broken_image_outlined,
-                      size: 40, color: Colors.white54),
+            child: Builder(builder: (context) {
+              final raw = bike.imageUrl.trim();
+              final resolved = raw.isEmpty
+                  ? ''
+                  : (Uri.tryParse(raw)?.hasScheme ?? false)
+                      ? raw
+                      : 'https://$raw';
+
+              if (resolved.isEmpty) {
+                return ColoredBox(
+                  color: Colors.grey.shade900,
+                  child: const Center(
+                    child: Icon(Icons.image_not_supported_outlined,
+                        size: 40, color: Colors.white54),
+                  ),
+                );
+              }
+
+              return CachedNetworkImage(
+                imageUrl: resolved,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Shimmer.fromColors(
+                  baseColor: Colors.grey.shade900,
+                  highlightColor: Colors.grey.shade800,
+                  child: ColoredBox(color: Colors.grey.shade900),
                 ),
-              ),
-            ),
+                errorWidget: (context, url, error) => ColoredBox(
+                  color: Colors.grey.shade900,
+                  child: const Center(
+                    child: Icon(Icons.broken_image_outlined,
+                        size: 40, color: Colors.white54),
+                  ),
+                ),
+              );
+            }),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
