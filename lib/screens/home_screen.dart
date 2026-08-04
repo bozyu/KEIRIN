@@ -61,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final bikes = _visibleBikes;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -68,51 +69,60 @@ class _HomeScreenState extends State<HomeScreen> {
           'KEIRIN',
           style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 4),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            tooltip: 'сортировка',
+            onPressed: () {
+              // можно добавить меню сортировки
+            },
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'сэтапы fixed gear',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.w800,
+                          color: colorScheme.onSurface,
                         ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     '${_bikes.length} сэтапов в ленте',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   const SizedBox(height: 16),
-                  TextField(
+                  SearchBar(
                     controller: _searchController,
                     onChanged: (_) => setState(() {}),
-                    decoration: InputDecoration(
-                      hintText: 'искать по юзеру, фрейму или деталям',
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: _searchController.text.isEmpty
-                          ? null
-                          : IconButton(
-                              tooltip: 'очистить поиск',
+                    hintText: 'искать по юзеру, фрейму или деталям',
+                    leading: const Icon(Icons.search),
+                    trailing: _searchController.text.isEmpty
+                        ? null
+                        : [
+                            IconButton(
                               icon: const Icon(Icons.close),
                               onPressed: () {
                                 _searchController.clear();
                                 setState(() {});
                               },
                             ),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
+                          ],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   SegmentedButton<BikeSort>(
                     segments: const [
                       ButtonSegment(
@@ -135,6 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSelectionChanged: (value) {
                       setState(() => _sort = value.first);
                     },
+                    showSelectedIcon: false,
+                    emptySelectionAllowed: false,
                   ),
                 ],
               ),
@@ -160,14 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
         ],
       ),
-      floatingActionButton: AnimatedScale(
-        scale: 1.0,
-        duration: const Duration(milliseconds: 220),
-        child: FloatingActionButton.extended(
-          onPressed: _openAddSetupSheet,
-          icon: const Icon(Icons.add),
-          label: const Text('сэтап'),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddSetupSheet,
+        child: const Icon(Icons.add),
       ),
     );
   }
