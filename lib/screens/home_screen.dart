@@ -68,6 +68,13 @@ class _HomeScreenState extends State<HomeScreen> {
           'KEIRIN',
           style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 4),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'фильтровать',
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -79,16 +86,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'сэтапы fixed gear',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${_bikes.length} сэтапов в ленте',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -107,9 +116,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 setState(() {});
                               },
                             ),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                      filled: true,
+                      fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.06),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(28),
+                        borderSide: BorderSide.none,
                       ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -135,6 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSelectionChanged: (value) {
                       setState(() => _sort = value.first);
                     },
+                    showSelectedIcon: false,
+                    emptySelectionAllowed: false,
                   ),
                 ],
               ),
@@ -160,14 +175,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
         ],
       ),
-      floatingActionButton: AnimatedScale(
-        scale: 1.0,
-        duration: const Duration(milliseconds: 220),
-        child: FloatingActionButton.extended(
-          onPressed: _openAddSetupSheet,
-          icon: const Icon(Icons.add),
-          label: const Text('сэтап'),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddSetupSheet,
+        child: const Icon(Icons.add),
       ),
     );
   }

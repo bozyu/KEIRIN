@@ -261,6 +261,15 @@ class _AddSetupSheetState extends State<AddSetupSheet> {
           fillColor: Colors.white.withValues(alpha: 0.05),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
           ),
         ),
         validator: required
@@ -289,6 +298,15 @@ class _AddSetupSheetState extends State<AddSetupSheet> {
           fillColor: Colors.white.withValues(alpha: 0.05),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
           ),
         ),
         validator: (value) {

@@ -35,12 +35,11 @@ class _KeirinAppState extends State<KeirinApp> {
         ),
         scaffoldBackgroundColor: const Color(0xFF0D1611),
         cardTheme: CardThemeData(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.greenAccent.withValues(alpha: 0.12)),
-          ),
-          color: const Color(0xFF14231A),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: const Color(0xFF14231A),
         ),
         appBarTheme: const AppBarTheme(
           elevation: 0,

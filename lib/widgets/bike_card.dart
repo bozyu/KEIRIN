@@ -16,132 +16,103 @@ class BikeCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 18),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      color: colorScheme.surface,
       clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AspectRatio(
-            aspectRatio: 4 / 3,
-            child: Builder(builder: (context) {
-              final raw = bike.imageUrl.trim();
-              final resolved = raw.isEmpty
-                  ? ''
-                  : (Uri.tryParse(raw)?.hasScheme ?? false)
-                      ? raw
-                      : 'https://$raw';
-
-              if (resolved.isEmpty) {
-                return ColoredBox(
-                  color: Colors.grey.shade900,
-                  child: const Center(
-                    child: Icon(Icons.image_not_supported_outlined,
-                        size: 40, color: Colors.white54),
-                  ),
-                );
-              }
-
-              return CachedNetworkImage(
-                imageUrl: resolved,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Shimmer.fromColors(
-                  baseColor: Colors.grey.shade900,
-                  highlightColor: Colors.grey.shade800,
-                  child: ColoredBox(color: Colors.grey.shade900),
-                ),
-                errorWidget: (context, url, error) => ColoredBox(
-                  color: Colors.grey.shade900,
-                  child: const Center(
-                    child: Icon(Icons.broken_image_outlined,
-                        size: 40, color: Colors.white54),
-                  ),
-                ),
-              );
-            }),
-          ),
+          _buildImage(context, bike, colorScheme, textTheme),
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            bike.bikeName,
-                            style: textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '@${bike.ownerName} - ${bike.frameSize}',
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        bike.bikeName,
+                        style: textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: colorScheme.onSurface,
+                        ),
                       ),
-                    ),
-                    PopupMenuButton<_BikeAction>(
-                      tooltip: 'действия',
-                      onSelected: (action) {
-                        if (action == _BikeAction.delete) onDelete?.call();
-                      },
-                      itemBuilder: (context) => const [
-                        PopupMenuItem(
-                          value: _BikeAction.delete,
-                          child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            dense: true,
-                            leading: Icon(Icons.delete_outline,
-                                color: Colors.redAccent),
-                            title: Text('удалить',
-                                style: TextStyle(color: Colors.redAccent)),
-                          ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '@${bike.ownerName}',
+                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                      if (bike.frameSize.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          bike.frameSize,
+                          style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant, height: 1.4),
                         ),
                       ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _buildStatChip(
-                      Icons.settings,
-                      '${bike.chainring}x${bike.cog}',
-                      colorScheme.primary,
-                    ),
-                    _buildStatChip(
-                      Icons.speed,
-                      'передача ${bike.gearRatio.toStringAsFixed(2)}',
-                      colorScheme.secondary,
-                    ),
-                    _buildStatChip(
-                      Icons.tire_repair,
-                      '${bike.skidPatches} скидпатчей',
-                      bike.skidPatches <= 2
-                          ? colorScheme.error
-                          : colorScheme.tertiary,
+                PopupMenuButton<_BikeAction>(
+                  tooltip: 'действия',
+                  color: colorScheme.surface,
+                  onSelected: (action) {
+                    if (action == _BikeAction.delete) onDelete?.call();
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: _BikeAction.delete,
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline, color: colorScheme.error),
+                          const SizedBox(width: 8),
+                          Text('удалить', style: TextStyle(color: colorScheme.error)),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: Colors.white10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                _buildStatText(
+                  label: 'Соотношение',
+                  value: '${bike.chainring}x${bike.cog}',
+                  colorScheme: colorScheme,
+                ),
+                const SizedBox(width: 12),
+                _buildStatText(
+                  label: 'Передача',
+                  value: bike.gearRatio > 0 ? bike.gearRatio.toStringAsFixed(2) : '—',
+                  colorScheme: colorScheme,
+                ),
+                const SizedBox(width: 12),
+                _buildStatText(
+                  label: 'Скидпатчи',
+                  value: '${bike.skidPatches}',
+                  colorScheme: colorScheme,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1),
           Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              title: const Text(
+              tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+              collapsedBackgroundColor: colorScheme.surface,
+              backgroundColor: colorScheme.surface,
+              title: Text(
                 'чекнуть сэтап',
-                style: TextStyle(fontWeight: FontWeight.w700),
+                style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurface),
               ),
               childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: [
@@ -158,25 +129,110 @@ class BikeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatChip(IconData icon, String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+  Widget _buildImage(BuildContext context, Bike bike, ColorScheme colorScheme, TextTheme textTheme) {
+    final raw = bike.imageUrl.trim();
+    final resolved = raw.isEmpty
+        ? ''
+        : (Uri.tryParse(raw)?.hasScheme ?? false)
+            ? raw
+            : 'https://$raw';
+
+    final imageWidget = resolved.isEmpty
+        ? ColoredBox(
+            color: colorScheme.surfaceContainerHighest,
+            child: const Center(
+              child: Icon(Icons.image_not_supported_outlined, size: 40),
+            ),
+          )
+        : CachedNetworkImage(
+            imageUrl: resolved,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Shimmer.fromColors(
+              baseColor: Colors.grey.shade800,
+              highlightColor: Colors.grey.shade700,
+              child: ColoredBox(color: colorScheme.surfaceContainerHighest),
+            ),
+            errorWidget: (context, url, error) => ColoredBox(
+              color: colorScheme.surfaceContainerHighest,
+              child: const Center(
+                child: Icon(Icons.broken_image_outlined, size: 40),
+              ),
+            ),
+          );
+
+    return AspectRatio(
+      aspectRatio: 4 / 3,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(width: 7),
+          imageWidget,
+          if (resolved.isNotEmpty)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      colorScheme.surface.withValues(alpha: 0.68),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  bike.bikeName,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '@${bike.ownerName}',
+                  style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatText({
+    required String label,
+    required String value,
+    required ColorScheme colorScheme,
+  }) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -188,14 +244,14 @@ class BikeCard extends StatelessWidget {
     if (specs.trim().isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                width: 3,
+                width: 4,
                 height: 18,
                 decoration: BoxDecoration(
                   color: colors.primary,
@@ -215,8 +271,7 @@ class BikeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(specs,
-              style: const TextStyle(height: 1.4, color: Colors.white70)),
+          Text(specs, style: TextStyle(height: 1.4, color: colors.onSurfaceVariant)),
         ],
       ),
     );
