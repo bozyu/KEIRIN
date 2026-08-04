@@ -68,13 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'KEIRIN',
           style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 4),
         ),
-        actions: [
-          IconButton(
-            tooltip: 'фильтровать',
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {},
-          ),
-        ],
+        actions: const [],
       ),
       body: CustomScrollView(
         slivers: [

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../models/bike_model.dart';
+import '../screens/setup_preview_sheet.dart';
 
 class BikeCard extends StatelessWidget {
   final Bike bike;
@@ -41,18 +42,6 @@ class BikeCard extends StatelessWidget {
                           color: colorScheme.onSurface,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '@${bike.ownerName}',
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                      ),
-                      if (bike.frameSize.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          bike.frameSize,
-                          style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant, height: 1.4),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -103,27 +92,51 @@ class BikeCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Divider(height: 1),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-              collapsedBackgroundColor: colorScheme.surface,
-              backgroundColor: colorScheme.surface,
-              title: Text(
-                'чекнуть сэтап',
-                style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurface),
-              ),
-              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              children: [
-                _buildCategory('виллсет', bike.wheelset, colorScheme),
-                _buildCategory('руль и хват', bike.cockpit, colorScheme),
-                _buildCategory('трансмиссия', bike.drivetrain, colorScheme),
-                _buildCategory('седло', bike.seating, colorScheme),
-                _buildCategory('дополнительно', bike.extras, colorScheme),
-              ],
-            ),
-          ),
+           const Divider(height: 1),
+           GestureDetector(
+             onTap: () {
+               showModalBottomSheet(
+                 context: context,
+                 isScrollControlled: true,
+                 backgroundColor: Colors.transparent,
+                 builder: (ctx) {
+                   final fullHeight = MediaQuery.of(context).size.height * 0.95;
+                   return SizedBox(
+                     height: fullHeight,
+                     width: double.infinity,
+                     child: Container(
+                       decoration: BoxDecoration(
+                         color: Theme.of(context).scaffoldBackgroundColor,
+                         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                       ),
+                       child: SingleChildScrollView(
+                         child: Padding(
+                           padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
+                           child: SetupPreviewSheet(bike: bike),
+                         ),
+                       ),
+                     ),
+                   );
+                 },
+               );
+             },
+             child: Container(
+               color: colorScheme.surface,
+               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+               child: Row(
+                 children: [
+                   Icon(Icons.info_outline, color: colorScheme.primary),
+                   const SizedBox(width: 12),
+                   Text(
+                     'чекнуть сэтап',
+                     style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurface),
+                   ),
+                   const Spacer(),
+                   Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
+                 ],
+               ),
+             ),
+           ),
         ],
       ),
     );
@@ -235,43 +248,6 @@ class BikeCard extends StatelessWidget {
               color: colorScheme.onSurfaceVariant,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategory(String title, String specs, ColorScheme colors) {
-    if (specs.trim().isEmpty) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 4,
-                height: 18,
-                decoration: BoxDecoration(
-                  color: colors.primary,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                title.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: colors.primary,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(specs, style: TextStyle(height: 1.4, color: colors.onSurfaceVariant)),
         ],
       ),
     );
